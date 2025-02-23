@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+
+    <link href="
+https://cdn.jsdelivr.net/npm/xterm@5.3.0/css/xterm.min.css
+" rel="stylesheet">
+    <script src="
+https://cdn.jsdelivr.net/npm/xterm@5.3.0/lib/xterm.min.js
+"></script>
+</head>
+<title>Alpine</title>
+<script src="./build/libv86.js"></script>
+<script>
+    let emulator = null;
+    "use strict";
+    window.onload = async function () {
+        let params = new URLSearchParams(window.location.search);
+        console.log(params);
+        let languageParam = params.get('lang');
+        if (!languageParam) {
+            languageParam = 'cpp';
+        }
+        let code = params.get('code');
+        if (!code) {
+            code = `#include <iostream>
+int main() {
+std::cout <<"\x1b[32m hello world" << std::endl;
+}`;
+        }
+        emulator = new V86({
+            wasm_path: "./build/v86.wasm",
+            memory_size: 256 * 1024 * 1024,
+            vga_memory_size: 8 * 1024 * 1024,
+            //screen_container: document.getElementById("screen_container"),
+            bios: {url: "./bios/seabios.bin"},
+            vga_bios: {url: "./bios/vgabios.bin"},
+            filesystem: {
+                baseurl: "./images/" + languageParam + "-rootfs-flat",
+                basefs: "./images/" + languageParam + "-fs.json",
+            },
+            initial_state: {url: "./images/" + languageParam + "-state.bin"},
+            autostart: true,
+            bzimage_initrd_from_filesystem: true,
+            cmdline: "rw root=host9p rootfstype=9p rootflags=trans=virtio,cache=loose modules=virtio_pci tsc=reliable",
+        });
+        async function run() {
+            await emulator.serial0_send("/root/main\n");
+            document.getElementById("terminal").style.display = "block";
+        }
+        if (params.get("embed") === null) {
+            // create a download button for the compiled binary and append to body element
+            let button = document.createElement('button');
+            button.innerHTML = "Download bin";
+            button.onclick = async function () {
+                var a = document.createElement("a");
+                a.download = "main.bin";
+                let file = await emulator.read_file("/root/main");
+                a.href = window.URL.createObjectURL(new Blob([file]));
+                a.dataset.downloadurl = "application/octet-stream:" + a.download + ":" + a.href;
+                a.click();
+
+                this.blur();
+            };
+            document.body.appendChild(button);
+        } else {
+            document.getElementById("embed-toolbar").style.display = "flex";
+            document.getElementById("run-button").onclick = run;
+        }
+        let binInit = false;
+        async function initBin() {
+            if (!binInit) {
+                if (params.get('bin') !== null) {
+                    let file = await fetch(params.get('bin'));
+                    console.log(file);
+                    await emulator.serial0_send("touch /root/main\n");
+                    await emulator.create_file("/root/main", new Uint8Array(await file.arrayBuffer()));
+                    await emulator.serial0_send("chmod +x /root/main\n");
+                    await emulator.serial0_send("clear\n");
+                } else {
+                    let buffer = new TextEncoder().encode(code);
+                    await emulator.serial0_send("touch /root/main.cpp\n");
+                    await emulator.create_file("/root/main.cpp", buffer);
+                    await emulator.serial0_send("g++ -o /root/main /root/main.cpp\n");
+                    await emulator.serial0_send("chmod +x /root/main\n");
+                    await emulator.serial0_send("clear\n");
+                }
+                binInit = true;
+            }
+        }
+        let term = null;
+        emulator.add_listener("emulator-ready", async function () {
+            term = new Terminal();
+            if (params.get("embed")) {
+                initBin();
+            } else {
+                term.onData(data => emulator.serial0_send(data));
+            }
+            term.open(document.getElementById('terminal'));
+        });
+        emulator.add_listener("serial0-output-byte", function (byte) {
+            let char = String.fromCharCode(byte);
+            term.write(char);
+        });
+    };
+</script>
+
+<body style="margin: 0px">
+    <div style="padding: 0px" id="screen_container">
+        <div style="white-space: pre; font: 14px monospace; line-height: 14px"></div>
+        <canvas style="display: none"></canvas>
+    </div>
+    <div style="display: none; height: 32px; flex-direction: row; justify-content: center; align-items: center;  background-color: rgb(60, 60, 60)"
+        id="embed-toolbar">
+        <div id="run-button" style="cursor: pointer; display: flex; flex-direction: row; align-items: center">
+            <svg style="width: 24px; height: 24px" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                stroke-width="1.5" stroke="green">
+                <path stroke-linecap="round" stroke-linejoin="round"
+                    d="M5.25 5.653c0-.856.917-1.398 1.667-.986l11.54 6.347a1.125 1.125 0 0 1 0 1.972l-11.54 6.347a1.125 1.125 0 0 1-1.667-.986V5.653Z" />
+            </svg>
+            <p style="color: white">Run Code Snippet</p>
+        </div>
+    </div>
+    <div id="terminal"></div>
+    <script>
+    </script>
+</body>
+
+</html>

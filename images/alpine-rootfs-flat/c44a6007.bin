@@ -1,0 +1,4 @@
+rmmod ne2k-pci && modprobe ne2k-pci
+rmmod virtio-net && modprobe virtio-net
+hwclock -s
+setup-interfaces -a -r
