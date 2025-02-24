@@ -1,0 +1,13 @@
+# SPDX-License-Identifier: BSD-2-Clause
+#
+prefix=/usr
+exec_prefix=/usr
+libdir=/usr/lib
+includedir=/usr/include
+
+Name: lastlog2
+Description: Y2038 safe version of lastlog
+Version: 2.40.4
+Requires.private: sqlite3
+Cflags: -I${includedir}/liblastlog2
+Libs: -L${libdir} -llastlog2

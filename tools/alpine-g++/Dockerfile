@@ -3,7 +3,7 @@ FROM docker.io/i386/alpine:3.21.0
 ENV KERNEL=virt
 ENV ADDPKGS=g++
 
-RUN apk add screen kbd openrc alpine-base agetty alpine-conf linux-$KERNEL linux-firmware-none $ADDPKGS
+RUN apk add kbd openrc alpine-base agetty alpine-conf linux-$KERNEL linux-firmware-none $ADDPKGS
 
 RUN sed -i 's/getty 38400 tty1/agetty --autologin root tty1 linux/' /etc/inittab
 

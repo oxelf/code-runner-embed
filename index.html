@@ -40,10 +40,16 @@ std::cout <<"\x1b[32m hello world" << std::endl;
                 baseurl: "./images/" + languageParam + "-rootfs-flat",
                 basefs: "./images/" + languageParam + "-fs.json",
             },
+            net_device: {
+                relay_url: "wss://relay.widgetry.org/",
+            },
             initial_state: {url: "./images/" + languageParam + "-state.bin"},
             autostart: true,
             bzimage_initrd_from_filesystem: true,
             cmdline: "rw root=host9p rootfstype=9p rootflags=trans=virtio,cache=loose modules=virtio_pci tsc=reliable",
+        });
+        emulator.add_listener("net0-send", function (packet) {
+            console.log("net0-send", packet);
         });
         async function run() {
             await emulator.serial0_send("/root/main\n");

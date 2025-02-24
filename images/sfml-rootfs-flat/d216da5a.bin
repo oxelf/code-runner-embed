@@ -1,0 +1,4 @@
+rmmod ne2k-pci && modprobe ne2k-pci
+rmmod virtio-net && vga=773 && modprobe virtio-net
+hwclock -s
+setup-interfaces -a -r

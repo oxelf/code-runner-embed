@@ -1,0 +1,10 @@
+prefix=/usr
+includedir=${prefix}/include
+libdir=${prefix}/lib
+
+Name: opus
+Description: Opus IETF audio codec (floating-point build)
+Version: 1.5.2
+Libs: -L${libdir} -lopus
+Libs.private: -lm
+Cflags: -I${includedir}/opus

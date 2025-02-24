@@ -1,0 +1,17 @@
+agetty
+alpine-base
+alpine-baselayout
+alpine-conf
+alpine-keys
+alpine-release
+apk-tools
+busybox
+g++
+iptables
+kbd
+libc-utils
+linux-firmware-none
+linux-virt
+openrc
+sfml
+sfml-dev

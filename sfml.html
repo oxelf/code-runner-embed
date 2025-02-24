@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+
+    <link href="
+https://cdn.jsdelivr.net/npm/xterm@5.3.0/css/xterm.min.css
+" rel="stylesheet">
+    <link rel="stylesheet" href="./sfml.css">
+    <script src="
+https://cdn.jsdelivr.net/npm/xterm@5.3.0/lib/xterm.min.js
+"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script type="module" src="https://cdn.jsdelivr.net/gh/vanillawc/wc-monaco-editor@1/index.js"></script>
+    <title>SFML Playground</title>
+    <script src="./build/libv86.js"></script>
+</head>
+
+<body style="margin: 0px">
+    <div class="bg-gray-800  flex flex-row justify-between  p-2 space-x-4 items-center shadow-md">
+        <div></div>
+        <div></div>
+        <div>
+            <button id="run-btn" class="px-4 py-1 bg-green-600 hover:bg-green-500 rounded text-sm">Run</button>
+        </div>
+    </div>
+    <wc-monaco-editor no-minimap style="height: 50vh" language="cpp" width="screen"></wc-monaco-editor>
+    <div style="display: block" id="terminal"></div>
+    <div style="width: 800px" class="preview-window" id="draggable">
+        <div class="preview-title-bar" id="title-bar">
+            <div id="close-btn" class="preview-close-btn"></div>
+            <p style="color: white">Preview</p>
+            <div>
+                <button id="scale-up-btn" class="px-4 py-1 bg-green-600 hover:bg-green-500 rounded text-sm">+</button>
+                <button id="scale-down-btn" class="px-4 py-1 bg-green-600 hover:bg-green-500 rounded text-sm">-</button>
+            </div>
+        </div>
+        <div style="width: 500px" class="preview-content" id="screen_container">
+            <div style="white-space: pre; font: 14px monospace; line-height: 14px"></div>
+            <canvas width="500px" style="display: none; width: 500px"></canvas>
+        </div>
+    </div>
+    <script src="./sfml.js"></script>
+</body>
+
+</html>

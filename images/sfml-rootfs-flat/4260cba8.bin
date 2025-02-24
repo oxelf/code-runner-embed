@@ -1,0 +1,12 @@
+prefix=/usr
+exec_prefix=/usr
+libdir=/usr/lib
+includedir=/usr/include
+server_libs=-L/usr/lib -ljackserver
+jack_implementation=jack2
+
+Name: jack
+Description: the Jack Audio Connection Kit: a low-latency synchronous callback-based media server
+Version: 1.9.22
+Libs: -L${libdir} -ljack
+Cflags: -I${includedir}

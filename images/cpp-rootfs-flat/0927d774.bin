@@ -1,0 +1,16 @@
+agetty
+alpine-base
+alpine-baselayout
+alpine-conf
+alpine-keys
+alpine-release
+apk-tools
+busybox
+g++
+kbd
+libc-utils
+linux-firmware-none
+linux-virt
+neovim
+openrc
+screen

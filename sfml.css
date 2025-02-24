@@ -1,0 +1,34 @@
+.preview-window {
+    position: absolute;
+    top: 50px;
+    left: 50px;
+    background: #2d2d2d;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    display: none;
+}
+
+.preview-title-bar {
+    width: 100%;
+    background: #1e1e1e;
+    border-top-left-radius: 8px;
+    border-top-right-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px;
+    cursor: move;
+}
+
+.preview-close-btn {
+    width: 12px;
+    height: 12px;
+    background: #ff5f56;
+    border-radius: 50%;
+    cursor: pointer;
+}
+
+.preview-content {
+    padding: 10px;
+    color: white;
+}
