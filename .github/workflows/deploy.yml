@@ -42,7 +42,10 @@ jobs:
 
       - name: Upload site artifact (like GitHub Pages does)
         uses: actions/upload-pages-artifact@v3
-
+        with:
+          path: ./_site
+          name: github-pages
+    retention-days: 1
   deploy:
     runs-on: ubuntu-latest
     needs: build
