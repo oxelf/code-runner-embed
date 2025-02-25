@@ -1,0 +1,29 @@
+name: Deploy GitHub Pages with LFS
+
+on:
+  push:
+    branches:
+      - main  # Change if using a different branch
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          lfs: true  # Enables LFS support
+
+      - name: Pull LFS files
+        run: git lfs pull
+
+      - name: Build your site
+        run: |
+          # Add your build steps if needed
+          cp -r * public/
+
+      - name: Deploy to GitHub Pages
+        uses: JamesIves/github-pages-deploy-action@v4
+        with:
+          branch: gh-pages  # The branch to deploy to
+          folder: public  # Change this if your output folder is different
