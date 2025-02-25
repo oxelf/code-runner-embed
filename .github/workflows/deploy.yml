@@ -22,14 +22,6 @@ jobs:
       - name: Pull LFS files
         run: git lfs pull
 
-      - name: Set up Ruby (for Jekyll)
-        uses: ruby/setup-ruby@v1
-        with:
-          ruby-version: '3.1'  # Use GitHub Pages' Ruby version
-
-      - name: Install Jekyll dependencies
-        run: bundle install
-
       - name: Build Jekyll site (like GitHub Pages does)
         uses: actions/jekyll-build-pages@v1
         with:
