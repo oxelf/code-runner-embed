@@ -1,29 +1,58 @@
-name: Deploy GitHub Pages with LFS
+name: Build and Deploy GitHub Pages with LFS
 
 on:
   push:
     branches:
-      - main  # Change if using a different branch
+      - main  # Change this to your default branch
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
 
 jobs:
-  deploy:
+  build:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout repository
+      - name: Checkout repository with LFS
         uses: actions/checkout@v4
         with:
-          lfs: true  # Enables LFS support
+          lfs: true  # Ensures LFS files are included
 
       - name: Pull LFS files
         run: git lfs pull
 
-      - name: Build your site
-        run: |
-          # Add your build steps if needed
-          cp -r * public/
-
-      - name: Deploy to GitHub Pages
-        uses: JamesIves/github-pages-deploy-action@v4
+      - name: Set up Ruby (for Jekyll)
+        uses: ruby/setup-ruby@v1
         with:
-          branch: gh-pages  # The branch to deploy to
-          folder: public  # Change this if your output folder is different
+          ruby-version: '3.1'  # Use GitHub Pages' Ruby version
+
+      - name: Install Jekyll dependencies
+        run: bundle install
+
+      - name: Build Jekyll site (like GitHub Pages does)
+        uses: actions/jekyll-build-pages@v1
+        with:
+          source: .
+          destination: ./_site
+          future: false
+          build_revision: ${{ github.sha }}
+          verbose: true
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Upload site artifact (like GitHub Pages does)
+        uses: actions/upload-pages-artifact@v3
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: build
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
